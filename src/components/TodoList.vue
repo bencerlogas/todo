@@ -1,16 +1,24 @@
 <template>
-  <ul class="flex flex-col gap-y-12 justify-items-stretch">
-    <li class="border-2 border-black rounded-full">Card</li>
-    <li class="border-2 border-black rounded-full">Card</li>
-    <li class="border-2 border-black rounded-full">Card</li>
-  </ul>
+  <div class="flex justify-between">
+    <h1 class="text-black font-bold">To do list</h1>
+    <button @click="addCard()" class="rounded-full bg-green-50 text-white w-6 h-6 font-thin">+</button>
+  </div>
+  <GeneralCard v-for="(card, index) in cards" :key="index" :card="card" />
 </template>
 
-<script>
-export default {
-  name: 'TodoList',
-  props: {},
-};
+<script setup>
+import { ref } from 'vue';
+import GeneralCard from './GeneralCard.vue';
+
+const cards = ref([]);
+function addCard() {
+  cards.value.push({
+    title: '',
+    text: '',
+    priority: '',
+    isChecked: true,
+  });
+}
 </script>
 
 <style></style>
