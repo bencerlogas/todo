@@ -7,4 +7,3 @@ const props = defineProps({ isEdited: Boolean });
 console.log(props);
 </script>
 
-<style></style>

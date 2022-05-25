@@ -21,4 +21,3 @@ function addCard() {
 }
 </script>
 
-<style></style>

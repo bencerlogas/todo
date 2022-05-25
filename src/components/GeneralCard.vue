@@ -28,4 +28,3 @@ function toggleEditmode() {
 }
 </script>
 
-<style></style>
