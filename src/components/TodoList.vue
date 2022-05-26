@@ -20,4 +20,3 @@ function addCard() {
   });
 }
 </script>
-

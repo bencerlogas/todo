@@ -13,18 +13,16 @@
 </template>
 
 <script setup>
-import { defineProps, ref } from 'vue';
+import { ref } from 'vue';
 import CardTitle from './CardTitle.vue';
 import CardText from './CardText.vue';
 import PriorityCheck from './PriorityCheck.vue';
 import CheckBox from './CheckBox.vue';
 
-const props = defineProps({ card: Object });
-console.log(props);
+defineProps({ card: Object });
 const isEdited = ref(false);
 
 function toggleEditmode() {
   isEdited.value = !isEdited.value;
 }
 </script>
-
