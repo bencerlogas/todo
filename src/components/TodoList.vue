@@ -4,6 +4,7 @@
     <button @click="addCard()" class="rounded-full bg-green-50 text-white w-6 h-6 font-thin">+</button>
   </div>
   <GeneralCard v-for="(card, index) in cards" :key="index" :card="card" />
+  <img v-if="!cards.length" src="../assets/arrayempty.png" />
 </template>
 
 <script setup>
