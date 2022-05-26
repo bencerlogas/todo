@@ -5,6 +5,6 @@
 <script setup>
 import { defineProps } from 'vue';
 const props = defineProps({ isEdited: Boolean });
-console.log(props);
+console.log('CardText Props', props);
 </script>
 
