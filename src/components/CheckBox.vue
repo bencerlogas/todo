@@ -2,7 +2,7 @@
   <div
     v-if="!isEdited"
     @click="checkBtn()"
-    class="relative rounded-full border-[6px] h-10 w-10"
+    class="relative rounded-full border-[6px] h-10 w-10 transition-all"
     :class="isBtnChecked ? 'border-[#4FDA9B]' : 'border-black'"
   >
     <div v-if="isBtnChecked" class="absolute -right-6 -top-7">
