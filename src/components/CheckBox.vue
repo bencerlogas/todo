@@ -1,10 +1,10 @@
 <template>
   <div class="transition-all delay-200">
     <div
-      v-if="!isEdited"
+      v-if="!isCardEdited"
       @click.prevent.stop="checkBtn()"
       class="relative rounded-full border-[6px] h-10 w-10 transition-all"
-      :class="isBtnChecked ? 'border-[#4FDA9B]' : 'border-black'"
+      :class="buttonBordercolor"
     >
       <div v-if="isBtnChecked" class="absolute -right-6 -top-7">
         <svg class="animated-check" viewBox="0 0 24 24">
@@ -16,15 +16,19 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
-defineProps({ isEdited: Boolean });
+defineProps({ isCardEdited: Boolean });
 
 const isBtnChecked = ref(false);
 
 function checkBtn() {
   isBtnChecked.value = !isBtnChecked.value;
 }
+
+const buttonBordercolor = computed(() => {
+  return isBtnChecked.value ? 'border-[#4FDA98]' : 'border-black';
+});
 </script>
 <style>
 .animated-check {

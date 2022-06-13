@@ -1,30 +1,30 @@
 <template>
   <div
-    @click="toggleEditmodeOn"
+    @click="setEditModeState(true)"
     class="flex flex-col justify-between p-4 border border-black min-h-[163px] rounded-2xl opacity"
-    :class="priorityCheckClicked ? 'bg-disabled' : ''"
+    :class="cardBlurred"
   >
     <div class="flex justify-between">
-      <CardTitle :isEdited="isEdited" :priorityCheckClicked="priorityCheckClicked" />
-      <div :class="{ 'bg-enable': priorityCheckClicked }">
-        <PriorityCheck :isEdited="isEdited" @isPriorityCheckClicked="blurBackground" />
+      <CardTitle :isCardEdited="isCardEdited" :isPriorityDropDownOpened="isPriorityDropDownOpened" />
+      <div :class="{ 'bg-enable': isPriorityDropDownOpened }">
+        <PriorityCheck :isCardEdited="isCardEdited" @onPriorityDropDownOpen="blurBackground" />
       </div>
     </div>
     <div class="flex justify-between">
-      <CardText :isEdited="isEdited" :priorityCheckClicked="priorityCheckClicked" />
-      <CheckBox :isEdited="isEdited" />
-      <div class="inline-block" v-if="isEdited">
+      <CardText :isCardEdited="isCardEdited" :isPriorityDropDownOpened="isPriorityDropDownOpened" />
+      <CheckBox :isCardEdited="isCardEdited" />
+      <div class="inline-block" v-if="isCardEdited">
         <button
           @click.prevent.stop="saveTodo"
           class="bg-green-50 rounded-2xl text-white w-[120px] h-[52px] mr-2"
-          :class="{ 'save-button': priorityCheckClicked }"
+          :class="{ 'save-button': isPriorityDropDownOpened }"
         >
           Save
         </button>
         <button
           @click="deleteTodo()"
           class="bg-[#E5E5E5] rounded-2xl w-[120px] h-[52px]"
-          :class="{ 'delete-button': priorityCheckClicked }"
+          :class="{ 'delete-button': isPriorityDropDownOpened }"
         >
           Delete
         </button>
@@ -34,36 +34,42 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import CardTitle from './CardTitle.vue';
 import CardText from './CardText.vue';
 import PriorityCheck from './PriorityCheck.vue';
 import CheckBox from './CheckBox.vue';
 
 const props = defineProps({ card: { type: Object }, index: { type: Number } });
-const emit = defineEmits(['deleteThis', 'priorityvalues']);
+const emit = defineEmits(['deleteCard', 'sendPriorityvalues']);
 
-const isEdited = ref(false);
-let priorityCheckClicked = ref();
+const isCardEdited = ref(false);
+let isPriorityDropDownOpened = ref();
 let priority = ref();
 
-function toggleEditmodeOn() {
-  isEdited.value = true;
+function setEditModeState(state) {
+  isCardEdited.value = state;
 }
+
 function saveTodo() {
-  isEdited.value = !isEdited.value;
-  emit('priorityvalues', priority.value, props.index);
+  setEditModeState(!isCardEdited.value);
+  isPriorityDropDownOpened.value = false;
+  emit('sendPriorityvalues', priority.value, props.index);
 }
 
 function deleteTodo() {
-  emit('deleteThis', props.index);
-  isEdited.value = false;
+  setEditModeState(false);
+  emit('deleteCard', props.index);
 }
 
-function blurBackground(isPriorityCheckClicked, dropdownPriority) {
-  priorityCheckClicked.value = !isPriorityCheckClicked;
+function blurBackground(isPriorityDropDownOpen, dropdownPriority) {
+  isPriorityDropDownOpened.value = !isPriorityDropDownOpen;
   priority.value = dropdownPriority;
 }
+
+const cardBlurred = computed(() => {
+  return isPriorityDropDownOpened.value ? 'bg-disabled' : '';
+});
 </script>
 
 <style scoped>
