@@ -16,15 +16,27 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 
-defineProps({ isCardEdited: Boolean });
+const emit = defineEmits(['update:modelValue', 'doneBtnCheck']);
 
-const isBtnChecked = ref(false);
+const props = defineProps({
+  isCardEdited: { type: Boolean, default: false },
+  modelValue: { type: Boolean, default: false },
+});
 
 function checkBtn() {
   isBtnChecked.value = !isBtnChecked.value;
 }
+
+const isBtnChecked = computed({
+  get: () => {
+    return props.modelValue;
+  },
+  set: (value) => {
+    emit('update:modelValue', value);
+  },
+});
 
 const buttonBordercolor = computed(() => {
   return isBtnChecked.value ? 'border-[#4FDA98]' : 'border-black';

@@ -1,33 +1,28 @@
 <template>
   <div class="select-none">
-    <div v-if="isCardEdited" :class="{ 'bg-disabled': !isPriorityDropDownOpen }">
-      <div
-        class="relative rounded-2xl w-[125px] h-[33px] text-center bg-blue-200"
-        :tabIndex="tabIndex"
-        @click="openPriorityDropDown()"
-      >
+    <div v-if="isCardEdited" :class="{ 'bg-disabled': isOpen }">
+      <div class="relative rounded-2xl w-[125px] h-[33px] text-center" :tabIndex="0" @click="togglePriorityDropDown">
         <div
           class="flex items-center justify-between rounded-2xl w-full h-full text-white border-2 border-black"
-          @click="blurCard()"
-          :class="({ 'bg-enable': isPriorityDropDownOpen }, selected.color)"
+          :class="({ 'bg-enable': isOpen }, selected.color)"
         >
-          <p class="mx-auto">{{ selected.priority }}</p>
+          <p class="mx-auto">{{ selected.priorityText }}</p>
           <div class="pr-[13px]">
             <ChevronDownIcon class="flex h-5 w-5 text-black" />
           </div>
         </div>
         <div
-          v-if="!isPriorityDropDownOpen"
-          v-click-outside="clickOutside"
+          v-if="isOpen"
+          v-click-outside="togglePriorityDropDown"
           class="border-2 bg-white border-black rounded-2xl mt-4"
         >
           <div
             class="text-center"
             v-for="(dropdownList, i) in dropdownLists"
             :key="i"
-            @click="showSelected(dropdownList)"
+            @click="selectItem(dropdownList)"
           >
-            {{ dropdownList.priority }}
+            {{ dropdownList.priorityText }}
           </div>
         </div>
       </div>
@@ -37,45 +32,40 @@
       :class="selected.color"
       class="flex items-center justify-between w-[125px] h-[33px] rounded-2xl text-white"
     >
-      <p class="mx-auto">{{ selected.priority }}</p>
+      <p class="mx-auto">{{ selected.priorityText }}</p>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { ChevronDownIcon } from '@heroicons/vue/solid';
 import { directive as vClickOutside } from 'click-outside-vue3';
 
-defineProps({ isCardEdited: Boolean, onPriorityDropDownOpen: Boolean });
-const emit = defineEmits(['blurComp', 'onPriorityDropDownOpen', 'sendPrio']);
+const props = defineProps({
+  modelValue: { type: String, default: '' },
+  isOpen: { type: Boolean, default: false },
+  isCardEdited: { type: Boolean, default: false },
+});
+const emit = defineEmits(['update:isOpen', 'update:modelValue', 'onSelectedValue']);
 
-const selected = ref({ priority: 'Low', color: 'bg-[#38CBCB]' });
-const isPriorityDropDownOpen = ref(true);
-const tabIndex = ref(0);
 const dropdownLists = ref([
-  { priority: 'Low', color: 'bg-[#38CBCB]' },
-  { priority: 'Medium', color: 'bg-[#FFAB00]' },
-  { priority: 'High', color: 'bg-[#FF481F]' },
+  { priority: 'c', priorityText: 'Low', color: 'bg-[#38CBCB]' },
+  { priority: 'b', priorityText: 'Medium', color: 'bg-[#FFAB00]' },
+  { priority: 'a', priorityText: 'High', color: 'bg-[#FF481F]' },
 ]);
+const selected = computed(
+  () =>
+    dropdownLists.value.find((item) => item.priority.toLowerCase() === props.modelValue.toLocaleLowerCase()) ||
+    dropdownLists.value[0]
+);
 
-function showSelected(selectedElement) {
-  blurCard();
-  selected.value = selectedElement;
+function selectItem(selectedElement) {
+  emit('update:modelValue', selectedElement.priority);
 }
 
-function openPriorityDropDown() {
-  isPriorityDropDownOpen.value = !isPriorityDropDownOpen.value;
-  emit('onPriorityDropDownOpen', isPriorityDropDownOpen.value, selected.value.priority);
-}
-
-function blurCard() {
-  emit('blurComp');
-}
-
-function clickOutside() {
-  blurCard();
-  openPriorityDropDown();
+function togglePriorityDropDown() {
+  emit('update:isOpen', !props.isOpen);
 }
 </script>
 
