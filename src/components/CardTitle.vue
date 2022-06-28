@@ -29,11 +29,3 @@ const title = computed({
   },
 });
 </script>
-
-<style scoped>
-.bg-disabled {
-  background-color: #e3e3e3;
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-</style>

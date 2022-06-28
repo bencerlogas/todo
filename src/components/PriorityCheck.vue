@@ -68,13 +68,3 @@ function togglePriorityDropDown() {
   emit('update:isOpen', !props.isOpen);
 }
 </script>
-
-<style scoped>
-.bg-disabled {
-  background-color: #e3e3e3;
-}
-.bg-enable {
-  background-color: white;
-  filter: brightness(1);
-}
-</style>

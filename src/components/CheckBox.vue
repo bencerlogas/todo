@@ -4,7 +4,7 @@
       v-if="!isCardEdited"
       @click.prevent.stop="checkBtn()"
       class="relative rounded-full border-[6px] h-10 w-10 transition-all"
-      :class="buttonBordercolor"
+      :class="buttonBorderColor"
     >
       <div v-if="isBtnChecked" class="absolute -right-6 -top-7">
         <svg class="animated-check" viewBox="0 0 24 24">
@@ -38,7 +38,7 @@ const isBtnChecked = computed({
   },
 });
 
-const buttonBordercolor = computed(() => {
+const buttonBorderColor = computed(() => {
   return isBtnChecked.value ? 'border-[#4FDA98]' : 'border-black';
 });
 </script>

@@ -63,7 +63,8 @@ function pushPriority(priority, index) {
 .empty-img-enter-from .empty-img-leave-to {
   opacity: 0;
 }
-.empty-img-enter-active {
+.empty-img-enter-active,
+.empty-img-leave-active {
   transition: all 0.3s ease-out;
 }
 .empty-img-enter-to .empty-img-leave-from {

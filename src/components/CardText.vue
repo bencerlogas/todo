@@ -32,9 +32,3 @@ const text = computed({
   },
 });
 </script>
-
-<style scoped>
-.bg-disabled {
-  background-color: #e3e3e3;
-}
-</style>

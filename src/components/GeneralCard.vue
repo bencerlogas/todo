@@ -73,13 +73,6 @@ const cardBlurred = computed(() => {
 </script>
 
 <style scoped>
-.bg-disabled {
-  background-color: #e3e3e3;
-}
-.bg-enable {
-  background-color: white;
-  filter: brightness(1);
-}
 .save-button {
   background-color: #b5ebb7;
 }
