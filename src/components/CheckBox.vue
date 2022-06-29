@@ -1,28 +1,46 @@
 <template>
-  <div
-    v-if="!isEdited"
-    @click="checkBtn()"
-    class="relative rounded-full border-[6px] h-10 w-10"
-    :class="isBtnChecked ? 'border-[#4FDA9B]' : 'border-black'"
-  >
-    <div v-if="isBtnChecked" class="absolute -right-6 -top-7">
-      <svg class="animated-check" viewBox="0 0 24 24">
-        <path d="M4.1 12.7L9 17.6 20.4 4.1" fill="none" />
-      </svg>
+  <div class="transition-all delay-200">
+    <div
+      v-if="!isCardEdited"
+      @click.prevent.stop="checkBtn()"
+      class="relative rounded-full border-[6px] h-10 w-10 transition-all"
+      :class="buttonBorderColor"
+    >
+      <div v-if="isBtnChecked" class="absolute -right-6 -top-7">
+        <svg class="animated-check" viewBox="0 0 24 24">
+          <path d="M4.1 12.7L9 17.6 20.4 4.1" fill="none" />
+        </svg>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { computed } from 'vue';
 
-defineProps({ isEdited: Boolean });
+const emit = defineEmits(['update:modelValue', 'doneBtnCheck']);
 
-const isBtnChecked = ref(false);
+const props = defineProps({
+  isCardEdited: { type: Boolean, default: false },
+  modelValue: { type: Boolean, default: false },
+});
 
 function checkBtn() {
   isBtnChecked.value = !isBtnChecked.value;
 }
+
+const isBtnChecked = computed({
+  get: () => {
+    return props.modelValue;
+  },
+  set: (value) => {
+    emit('update:modelValue', value);
+  },
+});
+
+const buttonBorderColor = computed(() => {
+  return isBtnChecked.value ? 'border-[#4FDA98]' : 'border-black';
+});
 </script>
 <style>
 .animated-check {

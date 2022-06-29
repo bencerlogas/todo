@@ -1,15 +1,14 @@
 module.exports = {
-  purge: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
-  darkMode: false, // or 'media' or 'class'
+  purge: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
+  darkMode: false,
   theme: {
     screens: {
-      desktop: "1024px",
-      // => @media (min-width: 1024px) { ...}
+      desktop: '1024px',
     },
     extend: {
       colors: {
         green: {
-          50: "#38CB89",
+          50: '#38CB89',
         },
       },
     },
@@ -17,5 +16,5 @@ module.exports = {
   variants: {
     extend: {},
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/line-clamp')],
 };
