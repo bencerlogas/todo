@@ -1,17 +1,18 @@
 <template>
   <div class="flex justify-between">
-    <h1 class="text-black text-2xl font-bold">To do list</h1>
+    <h1 class="text-black text-[32px] font-bold">To do list</h1>
     <button @click="addCard()" class="rounded-full bg-green-50 text-white w-10 h-10 font-thin text-2xl">+</button>
   </div>
   <div class="relative gap-y-12 flex flex-col overflow-hidden">
-    <TransitionGroup name="delete-card" appear>
+    <SearchBar v-model="searchString" v-model:orderBy="orderByOptions" v-model:sortBy="sortDirection" />
+    <TransitionGroup name="delete-card">
       <GeneralCard
-        v-for="(card, index) in cards"
-        :key="card"
-        :card="card"
-        :index="index"
-        @deleteCard="deleteCard"
-        @sendPriorityvalues="pushPriority"
+        v-for="(card, index) in filteredCards"
+        :key="card.id"
+        :modelValue="card"
+        @update:modelValue="updateCard"
+        @deleteCard="deleteCard(card.id)"
+        @checked="moveElementToLastPosition(index)"
       />
     </TransitionGroup>
     <Transition name="empty-img">
@@ -21,24 +22,113 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import GeneralCard from './GeneralCard.vue';
+import SearchBar from './SearchBar.vue';
 
-const cards = ref([]);
+const cards = ref(localStorage.getItem('cards') ? JSON.parse(localStorage.getItem('cards')) || [] : []);
 function addCard() {
   cards.value.unshift({
     title: '',
     text: '',
-    priority: '',
-    isChecked: true,
+    priorityText: 'Medium',
+    isChecked: false,
+    id: Math.random(),
   });
 }
+
+const orderByOptions = ref(['']);
+
+const sortDirection = ref('');
+
+function updateCard(card) {
+  const index = cards.value.findIndex((c) => c.id === card.id);
+  cards.value[index] = card;
+}
+
 function deleteCard(index) {
-  cards.value.splice(index, 1);
+  cards.value = cards.value?.filter((card) => card.id !== index);
+  filteredCards.value = filteredCards.value.filter((card) => card.id !== index);
 }
-function pushPriority(priority, index) {
-  cards.value[index].priority = priority;
+
+function moveElementToLastPosition(index) {
+  const card = cards.value[index];
+  setTimeout(() => {
+    cards.value.splice(index, 1);
+    cards.value.push(card);
+  }, 700);
 }
+
+const searchString = ref('');
+// function fieldSorter(fields) {
+//   var dir = [],
+//     i,
+//     l = fields.length;
+//   fields = fields.map(function (o, i) {
+//     if (o[0] === '-') {
+//       dir[i] = -1;
+//       o = o.substring(1);
+//     } else {
+//       dir[i] = 1;
+//     }
+//     return o;
+//   });
+
+//   return function (a, b) {
+//     for (i = 0; i < l; i++) {
+//       var o = fields[i];
+//       console.log(a[o]);
+//       console.log(b[o]);
+//       if (a[o] > b[o]) return dir[i];
+//       if (a[o] < b[o]) return -dir[i];
+//     }
+//     return 0;
+//   };
+// }
+const fieldSorter = (fields) => (firstCard, secondCard) =>
+  fields
+    .map((key) => {
+      let dir = 1;
+      if (key[0] === '-') {
+        dir = -1;
+        key = key.substring(1);
+        console.log(key);
+      }
+      return firstCard[key] > secondCard[key] ? dir : firstCard[key] < secondCard[key] ? -dir : 0;
+    })
+    .reduce((p, n) => (p ? p : n), 0);
+
+const filteredCards = computed(() => {
+  const sortingOptions = orderByOptions.value
+    .map((key) => {
+      if (sortDirection.value === 'asc') {
+        return `${key}`;
+      } else if (sortDirection.value === 'desc') {
+        return `-${key}`;
+      } else {
+        return null;
+      }
+    })
+    .filter((item) => item !== null);
+  return (
+    cards.value
+      ?.filter?.(
+        (card) =>
+          card.title.toLowerCase().includes(searchString.value.toLowerCase()) ||
+          card.text.toLowerCase().includes(searchString.value.toLowerCase())
+      )
+      ?.sort?.(fieldSorter(sortingOptions)) || []
+  );
+});
+
+watch(
+  cards,
+  () => {
+    console.warn('updated', cards.value);
+    localStorage.setItem('cards', JSON.stringify(cards.value));
+  },
+  { deep: true }
+);
 </script>
 <style>
 .delete-card-enter-active {
@@ -69,9 +159,5 @@ function pushPriority(priority, index) {
 }
 .empty-img-enter-to .empty-img-leave-from {
   opacity: 1;
-}
-
-.empty-img-leave-active {
-  transition: all 0.3s ease-out;
 }
 </style>
